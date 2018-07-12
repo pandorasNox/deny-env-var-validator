@@ -1,0 +1,26 @@
+
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: denyenv
+webHooks:
+  - name: denyenv.example.com
+    rules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+          - CREATE
+        resources:
+          - pods
+    failurePolicy: Fail
+    clientConfig:
+      # url: "${HTTPS_TRIGGER_URL}"
+      service:
+        namespace: 
+        name: 
+      # `caBundle` is a PEM encoded CA bundle which will be used to validate
+      # the webhook's server certificate.
+      # Required.
+      caBundle: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUM2VENDQWRHZ0F3SUJBZ0lKQUpYeDFLc0FlOGRNTUEwR0NTcUdTSWIzRFFFQkN3VUFNQkl4RURBT0JnTlYKQkFNTUIzUmxjM1F0WTJFd0hoY05NVGd3TnpFeE1USXpNak0yV2hjTk1UZ3dPVEE1TVRJek1qTTJXakFiTVJrdwpGd1lEVlFRRERCQjBaWE4wTG1WNFlXMXdiR1V1WTI5dE1JSUJJakFOQmdrcWhraUc5dzBCQVFFRkFBT0NBUThBCk1JSUJDZ0tDQVFFQXJQYWZwaWR5Qnh2NzJTWGZiK0ErV3d1aWtUMkhMZHdNZitBZHo5V2VuV2JtdWdsSXVscG4KWi9NOEZKOU5qcnpOemNWd1pOa3lmYno0Q2dOTDRWWVdhWDVyQlcwOHhjZkp5T29KcXhjc0ZTalZxd2RXOVlEYgo1a3NRTEZXM0JrTCtwS1JnblhFUFlFb3pnWGdpQTg2R3E4L3NaS2RZdGJ6RFV0Tmxhb0JvMkxHajBBT08yR2taCmxNdjhIbjFVeGFaQXlrWGppMm96aGZGTnZSRGp6VHA0UjN0Rkl1TSt1OXBEQXNlYnFoMkhRdjc3U2lqdXlVNmMKaHcycHllZkhXVzJUQ0l3TnhqZmZGNHhraHZuSWRUUDdPTTdYd0wrV0FKQ2FwRGJyeStNUUVyeHVvVjdzT1d1MgowR1ZVK21SNzNVNW16Zm5leW9XTTliZ3FoTVVZRjFJNkx3SURBUUFCb3prd056QUpCZ05WSFJNRUFqQUFNQXNHCkExVWREd1FFQXdJRjREQWRCZ05WSFNVRUZqQVVCZ2dyQmdFRkJRY0RBZ1lJS3dZQkJRVUhBd0V3RFFZSktvWkkKaHZjTkFRRUxCUUFEZ2dFQkFEOWhMajJUcHg1NU85ZXl3M1Z6U2V2cDFGaUZRWSt4aGRzdjBaRUs1em5SQWQzRwpsSE1WWlppYTNWWnpmSXFKYnp6dkxPdk5xdys1Rk82NkRvQWZJU21TRUdvcjQ1T200TkgxcysvdjFyVnBOeldXCkQ4L2lmS3RpWjdMdXFLQ3pRK3NFaDlFTHJ0ZVBxOWF0aUp2Z2cvemVKNmRsbUlKL2FKQmk3RUl6UWZ1d2duQ2QKUlNQRGJYQURLbmV4ek9EZWhYL0YvK0UwZWpGNU4yNkZKZmlKdENPRC9MWnd0ZWF6dGN3Yjg3cFBOUFNhRkVLRApMaGhLVlJsTEI5dGZsOUFsVkhvRzhGVEMrMlMyNFk1cXpVeGttejdwYitWcklmVG4vUEI3UFVOOEV6QitGQTdrClZ2TkVoVzhpNlFaR2pJMjB0ZkdsTFZocXRXNVBXTjREbjdESHZpYz0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=
