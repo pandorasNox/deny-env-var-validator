@@ -13,6 +13,6 @@ RUN CGO_ENABLED=0 GOOS=linux go install -a -installsuffix cgo .
 # ============================================================
 # ============================================================
 
-FROM scratch
+FROM alpine:3.8
 COPY --from=compile /go/bin/k8s-resource-mutator /k8s-resource-mutator
 ENTRYPOINT ["/k8s-resource-mutator"]
