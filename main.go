@@ -2,12 +2,12 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"net/http/httputil"
-	"log"
-	"crypto/tls"
 
 	"github.com/golang/glog"
 )
@@ -19,8 +19,12 @@ import (
 // 	code: int
 // }
 
+type AdmissionReview struct {
+	Response AdmissionResponse `json:"response"`
+}
+
 type AdmissionResponse struct {
-	Allowed	bool `json:"allowed"`
+	Allowed bool `json:"allowed"`
 	// status	AdmissionStatus
 }
 
@@ -33,9 +37,10 @@ func serveContent(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(string(requestDump))
 
-	admissionResponse := AdmissionResponse{Allowed:true}
+	admissionResponse := AdmissionResponse{Allowed: true}
+	admissionReview := AdmissionReview{Response: admissionResponse}
 
-	// js, err := json.Marshal(admissionResponse)
+	// js, err := json.Marshal(admissionReview)
 	// if err != nil {
 	//   http.Error(w, err.Error(), http.StatusInternalServerError)
 	//   return
@@ -45,7 +50,7 @@ func serveContent(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(admissionResponse)
+	json.NewEncoder(w).Encode(admissionReview)
 }
 
 func main() {
@@ -68,9 +73,9 @@ func main() {
 	// ==============
 
 	cfg := &tls.Config{
-		MinVersion:					tls.VersionTLS12,
-		CurvePreferences:			[]tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
-		PreferServerCipherSuites:	true,
+		MinVersion:               tls.VersionTLS12,
+		CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
+		PreferServerCipherSuites: true,
 		CipherSuites: []uint16{
 			// tls.TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256,
 			tls.TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256,
@@ -85,7 +90,7 @@ func main() {
 	// clientset := getClient()
 	server := &http.Server{
 		// Addr:      ":443",
-		Addr:      ":8083",
+		Addr: ":8083",
 		// TLSConfig: configTLS(config, clientset),
 		TLSConfig: cfg,
 	}

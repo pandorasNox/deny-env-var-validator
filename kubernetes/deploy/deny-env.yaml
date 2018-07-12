@@ -35,7 +35,7 @@ spec:
     spec:
       containers:
       - name: deny-env-var-validator
-        image:  validator:v2
+        image:  validator:v3
         ports:
         - containerPort: 8083
         volumeMounts:
