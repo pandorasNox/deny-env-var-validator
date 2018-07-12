@@ -3,7 +3,7 @@ apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
 metadata:
   name: denyenv
-webHooks:
+webhooks:
   - name: denyenv.example.com
     rules:
       - apiGroups:
@@ -18,8 +18,8 @@ webHooks:
     clientConfig:
       # url: "${HTTPS_TRIGGER_URL}"
       service:
-        namespace: 
-        name: 
+        namespace: deny-env
+        name: deny-env
       # `caBundle` is a PEM encoded CA bundle which will be used to validate
       # the webhook's server certificate.
       # Required.
