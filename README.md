@@ -1,5 +1,7 @@
 
-# deny-env-var-validator
+# kubernetes-deny-env-var
+
+Kubernetes admission validator controller webhook
 
 ### generate cert.pem and key.pem for ListenAndServeTLS
 `docker run --rm -v $(pwd)/certs:/certs -e SSL_SUBJECT=test.example.com -e SSL_KEY="ssl-key.pem" -e SSL_CSR="ssl-key.csr" -e SSL_CERT="ssl-cert.pem" -e K8S_NAME="pls-replace-me-kubernetes-name" paulczar/omgwtfssl`
