@@ -19,13 +19,12 @@ import (
 // 	code: int
 // }
 
+// AdmissionReview returns a validation to kubernetes api server
 type AdmissionReview struct {
-	Response AdmissionResponse `json:"response"`
-}
-
-type AdmissionResponse struct {
-	Allowed bool `json:"allowed"`
-	// status	AdmissionStatus
+	Response struct {
+		Allowed bool `json:"allowed"`
+		// status	AdmissionStatus
+	} `json:"response"`
 }
 
 func serveContent(w http.ResponseWriter, r *http.Request) {
@@ -37,10 +36,13 @@ func serveContent(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(string(requestDump))
 
-	admissionResponse := AdmissionResponse{
-		Allowed: true,
+	admissionReview := &AdmissionReview{
+		Response: struct {
+			Allowed bool `json:"allowed"`
+		}{
+			Allowed: true,
+		},
 	}
-	admissionReview := AdmissionReview{Response: admissionResponse}
 
 	// js, err := json.Marshal(admissionReview)
 	// if err != nil {
