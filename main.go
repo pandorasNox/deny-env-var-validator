@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -39,6 +40,20 @@ func serveContent(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(string(requestDump))
 
 	// var admissionRequest = req.body
+	var body []byte
+	if r.Body != nil {
+		if data, err := ioutil.ReadAll(r.Body); err == nil {
+			body = data
+		}
+	}
+	fmt.Println([]byte(body))
+
+	// verify the content type is accurate
+	contentType := r.Header.Get("Content-Type")
+	if contentType != "application/json" {
+		glog.Errorf("contentType=%s, expect application/json", contentType)
+		return
+	}
 
 	admissionReview := &AdmissionReview{
 		Response: struct {
