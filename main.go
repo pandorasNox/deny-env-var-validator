@@ -4,10 +4,12 @@ package main
 import (
 	"crypto/tls"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
+	"os"
 
 	"github.com/golang/glog"
 )
@@ -36,6 +38,8 @@ func serveContent(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(string(requestDump))
 
+	// var admissionRequest = req.body
+
 	admissionReview := &AdmissionReview{
 		Response: struct {
 			Allowed bool `json:"allowed"`
@@ -58,19 +62,25 @@ func serveContent(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	var tlsDisabled *bool
+	tlsDisabled = flag.Bool("tlsDisabled", false, "(optional) disables tls for the server")
+	flag.Parse()
+
 	// var config Config
 	// config.addFlags()
 	// flag.Parse()
 
+	fmt.Println("tlsDisabled: ", bool(*tlsDisabled))
+
 	http.HandleFunc("/content", serveContent)
 
-	// // clientset := getClient()
-	// server := &http.Server{
-	// 	// Addr:      ":443",
-	// 	Addr:      ":8083",
-	// 	// TLSConfig: configTLS(config, clientset),
-	// }
-	// // server.ListenAndServe()
+	if bool(*tlsDisabled) {
+		server := &http.Server{
+			Addr: ":8083",
+		}
+		server.ListenAndServe()
+		os.Exit(0)
+	}
 
 	// ==============
 	// use TLS
