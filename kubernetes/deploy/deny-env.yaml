@@ -35,7 +35,7 @@ spec:
     spec:
       containers:
       - name: deny-env-var-validator
-        image:  validator:v3
+        image:  kubernetes-deny-env-var:v4
         ports:
         - containerPort: 8083
         volumeMounts:

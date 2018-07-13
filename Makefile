@@ -37,4 +37,4 @@ endif
 .PHONY: build
 build: ##@setup reuse minikube docker env
 	@eval $$(minikube docker-env) ;\
-	docker build -t validator:$(DO_ARGS) .
+	docker build -t kubernetes-deny-env-var:$(DO_ARGS) .

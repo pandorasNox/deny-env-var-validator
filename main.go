@@ -37,7 +37,9 @@ func serveContent(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(string(requestDump))
 
-	admissionResponse := AdmissionResponse{Allowed: true}
+	admissionResponse := AdmissionResponse{
+		Allowed: true,
+	}
 	admissionReview := AdmissionReview{Response: admissionResponse}
 
 	// js, err := json.Marshal(admissionReview)
