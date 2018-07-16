@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -25,9 +24,35 @@ import (
 // AdmissionReview returns a validation to kubernetes api server
 type AdmissionReview struct {
 	Response struct {
-		Allowed bool `json:"allowed"`
-		// status	AdmissionStatus
+		Allowed bool            `json:"allowed"`
+		Status  AdmissionStatus `json:"status"`
 	} `json:"response"`
+}
+
+// AdmissionStatus is baz
+type AdmissionStatus struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+	Reason  string `json:"reason"`
+	Code    int    `json:"code"`
+}
+
+// AdmissionResponse is foo
+type AdmissionResponse struct {
+	Kind    string `json:"kind"`
+	Request struct {
+		Object struct {
+			Spec struct {
+				Containers []struct {
+					Name string
+					Env  []struct {
+						Name  string
+						Value string
+					}
+				}
+			}
+		}
+	}
 }
 
 func serveContent(w http.ResponseWriter, r *http.Request) {
@@ -39,15 +64,6 @@ func serveContent(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println(string(requestDump))
 
-	// var admissionRequest = req.body
-	var body []byte
-	if r.Body != nil {
-		if data, err := ioutil.ReadAll(r.Body); err == nil {
-			body = data
-		}
-	}
-	fmt.Println([]byte(body))
-
 	// verify the content type is accurate
 	contentType := r.Header.Get("Content-Type")
 	if contentType != "application/json" {
@@ -55,12 +71,49 @@ func serveContent(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	admissionStatus := new(AdmissionStatus)
 	admissionReview := &AdmissionReview{
 		Response: struct {
-			Allowed bool `json:"allowed"`
+			Allowed bool            `json:"allowed"`
+			Status  AdmissionStatus `json:"status"`
 		}{
 			Allowed: true,
+			Status:  *admissionStatus,
 		},
+	}
+
+	// var admissionRequest = req.body
+	// https://medium.com/@xoen/golang-read-from-an-io-readwriter-without-loosing-its-content-2c6911805361
+	// var body []byte
+	// if r.Body != nil {
+	// 	if data, err := ioutil.ReadAll(r.Body); err == nil {
+	// 		body = data
+	// 	}
+	// }
+	// fmt.Println("")
+	// fmt.Println("", body)
+
+	fmt.Println("body:")
+	admissionResponse := new(AdmissionResponse)
+	json.NewDecoder(r.Body).Decode(admissionResponse)
+	fmt.Println(admissionResponse)
+	foundEnv := false
+	for _, container := range admissionResponse.Request.Object.Spec.Containers {
+		// fmt.Println("index:", index, " ", "len:", len(container.Env))
+
+		if len(container.Env) > 0 {
+			foundEnv = true
+			admissionStatus.Status = "Failure"
+			admissionStatus.Message = "The container \"" + container.Name + "\" is using env vars"
+			admissionStatus.Reason = "The container \"" + container.Name + "\" is using env vars"
+			admissionStatus.Code = 402
+			break
+		}
+	}
+
+	if foundEnv {
+		admissionReview.Response.Allowed = false
+		admissionReview.Response.Status = *admissionStatus
 	}
 
 	// js, err := json.Marshal(admissionReview)
