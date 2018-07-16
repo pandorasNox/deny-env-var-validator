@@ -35,7 +35,7 @@ spec:
     spec:
       containers:
       - name: deny-env-var-validator
-        image:  kubernetes-deny-env-var:v4
+        image:  pandorasnox/kubernetes-deny-env-var:1.0.0
         ports:
         - containerPort: 8083
         volumeMounts:
